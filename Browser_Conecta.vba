@@ -43,3 +43,7 @@ For Each Win In CreateObject("Shell.Application").Windows
 Next
 Set Win = Nothing
 '************************************************************************************************************************************************************
+
+'Ao final
+IE.Quit 'Fechar o browser.
+Set IE = Nothing 'Limpar variável.
