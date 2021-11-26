@@ -1,0 +1,105 @@
+Function Trata_Valor(Texto As String) As Single
+    Dim Posicao As Long
+    Dim Soma As Single
+    Dim Primeiro As Single
+    Dim Ultimo As Single
+    Dim i As Long
+    Dim Vez As Long
+    Dim Parte_A As String
+    Dim Parte_B As String
+    Dim Parte_C As String
+    
+    Soma = 0
+    Primeiro = 0
+    Ultimo = 0
+    Posicao = 0
+    Vez = 0
+    
+    Do While True
+        Posicao = InStr(Posicao + 1, Texto, "€")
+        
+        If Posicao > 1 Then
+            Parte_A = StrReverse(Mid(Texto, 1, Posicao - 1))
+            
+            'Elimina espaço em branco entre o sifrão e o número
+            Do While Left(Parte_A, 1) = " "
+                Parte_A = Mid(Parte_A, 2, Len(Parte_A))
+            Loop
+            
+            'Quando o sifrão vem antes do número
+            If Not IsNumeric(Left(Parte_A, 1)) Then
+                Parte_A = Mid(Texto, Posicao + 1, 20)
+                
+                Do While Left(Parte_A, 1) = " "
+                    Parte_A = Mid(Parte_A, 2, Len(Parte_A))
+                Loop
+                
+                If InStr(1, Parte_A, " ") > 0 Then
+                    Parte_B = Left(Parte_A, InStr(1, Parte_A, " ") - 1)
+                Else
+                    Parte_B = Parte_A
+                End If
+                
+                'Elimina texto no fim do número
+                Do While Len(Parte_B) > 0 And Not IsNumeric(Right(Parte_B, 1))
+                    Parte_B = Mid(Parte_B, 1, Len(Parte_B) - 1)
+                Loop
+            Else
+                'Quando o sifrão vem depois do número
+                Parte_B = StrReverse(Left(Parte_A, InStr(1, Parte_A, " ") - 1))
+            End If
+            
+                        
+            '#.###,##
+            If InStr(1, Parte_B, ".") > 0 And InStr(1, Parte_B, ",") And (Len(Parte_B) - InStr(1, Parte_B, ",") = 2) Then 'Retira separador de milhar quando usado ponto, e também tiver virgula como separador decimal
+                Parte_B = Replace(Parte_B, ".", "")
+                
+            '#,###.##
+            ElseIf InStr(1, Parte_B, ",") > 0 And InStr(1, Parte_B, ".") And (Len(Parte_B) - InStr(1, Parte_B, ".") = 2) Then 'Retira separador de milhar quando usado virgula, e também tiver ponto como separador decimal
+                Parte_B = Replace(Replace(Parte_B, ",", ""), ".", ",")
+            
+            '####.##
+            ElseIf InStr(1, Parte_B, ".") > 0 And Len(Parte_B) > 3 And (Len(Parte_B) - InStr(1, Parte_B, ".") = 2) Then 'Quanto tiver ponto e tiver dois digitos após, entende como separador decimal, troca por vigula
+                Parte_B = Replace(Parte_B, ".", ",")
+            
+            '#.###
+            ElseIf InStr(1, Parte_B, ".") > 0 Then 'Quanto tiver ponto e tiver dois digitos após, entende como separador decimal, troca por vigula
+                Parte_B = Replace(Parte_B, ".", "")
+            End If
+           
+            Parte_C = "0"
+            
+            For i = 1 To Len(Parte_B)
+                Parte_C = Parte_C & Mid(Parte_B, i, 1)
+                
+                If Not IsNumeric(Parte_C) Then Parte_C = "0"
+            Next
+                        
+            'Quando último valor igual ao penúltimo, ignorar pois é duplicidade
+            If Parte_C > 0 And Parte_C <> Primeiro And Parte_C <> Ultimo Then
+                Vez = Vez + 1
+                Soma = Soma + Parte_C
+            End If
+            
+            'Regista o primeiro valor para comparar no final se houve duplicidade
+            If Primeiro = 0 Then
+                Primeiro = Parte_C
+            End If
+            
+            Ultimo = Parte_C
+        Else
+            'situacao que nao tem sifrao mas tem valor. A ser tratada.
+            Exit Do
+        End If
+    Loop
+
+    'Verifica se há valores duplicados
+    If Primeiro > 0 Then
+         If Primeiro = Soma / Int(Soma / Primeiro) Then
+             Soma = Primeiro
+        End If
+    End If
+    
+    Trata_Valor = Soma
+
+End Function
