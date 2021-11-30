@@ -1,4 +1,5 @@
 'Retorna o conteúdo de um ComboBox (Select) selecionado
+'Referência : https://stackoverflow.com/questions/18065732/get-text-of-selection-option-in-select-element-using-vba
 
 'Inicia objeto com o Internet Explorer.
 Dim IE As Object
