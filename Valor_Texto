@@ -57,6 +57,10 @@ Function Trata_Valor(Texto As String) As Single
             '#,###.##
             ElseIf InStr(1, Parte_B, ",") > 0 And InStr(1, Parte_B, ".") And (Len(Parte_B) - InStr(1, Parte_B, ".") = 2) Then 'Retira separador de milhar quando usado virgula, e também tiver ponto como separador decimal
                 Parte_B = Replace(Replace(Parte_B, ",", ""), ".", ",")
+                
+            '#.###.##
+            ElseIf InStr(1, Left(Parte_B, Len(Parte_B) - 3), ".") > 0 And Mid(Parte_B, Len(Parte_B) - 2, 1) = "." Then 'Retira separador de milhar quando usado ponto, e também tiver ponto como separador decimal
+                Parte_B = Replace(Replace(Replace(Parte_B, ".", ",", 1, 1), ",", ""), ".", ",")
             
             '####.##
             ElseIf InStr(1, Parte_B, ".") > 0 And Len(Parte_B) > 3 And (Len(Parte_B) - InStr(1, Parte_B, ".") = 2) Then 'Quanto tiver ponto e tiver dois digitos após, entende como separador decimal, troca por vigula
